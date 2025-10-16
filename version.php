@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_faces';
-$plugin->version   = 2025101505;      // YYYYMMDDRR.
+$plugin->version   = 2025101507;      // YYYYMMDDRR.
 $plugin->requires  = 2024100700;      // Moodle 4.5 (LTS).
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = '3.0 for Moodle 4.5+';
