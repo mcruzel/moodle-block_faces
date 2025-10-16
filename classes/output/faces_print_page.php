@@ -24,6 +24,7 @@
 
 namespace block_faces\output;
 
+use block_faces\local\groups_helper;
 use core_collator;
 use core_user\fields;
 use moodle_url;
@@ -58,9 +59,7 @@ class faces_print_page implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        global $PAGE, $CFG;
-
-        require_once($CFG->libdir . '/grouplib.php');
+        global $PAGE;
 
         $context = \context_course::instance($this->course->id);
 
@@ -69,75 +68,8 @@ class faces_print_page implements renderable, templatable {
             $this->orderby = 'firstname';
         }
 
-        $selectedgroupids = array_values(array_unique(array_map('intval', $this->groupids)));
-        $selectedgroups = [];
-        foreach ($selectedgroupids as $groupid) {
-            if ($groupid <= 0) {
-                continue;
-            }
-            if (!$group = groups_get_group($groupid, '*')) {
-                continue;
-            }
-            if (!groups_group_visible($group, $this->course, $context)) {
-                continue;
-            }
-            $selectedgroups[$groupid] = $group;
-        }
-
-        $formattedselected = array_keys($selectedgroups);
-
-        $groupings = [];
-        $usedgroupids = [];
-        $coursegroupings = groups_get_all_groupings($this->course->id);
-        if (!empty($coursegroupings)) {
-            foreach ($coursegroupings as $grouping) {
-                $groupinggroups = groups_get_all_groups($this->course->id, 0, $grouping->id, 'g.*');
-                $groupitems = [];
-                foreach ($groupinggroups as $group) {
-                    if (!groups_group_visible($group, $this->course, $context)) {
-                        continue;
-                    }
-                    $usedgroupids[$group->id] = true;
-                    $groupitems[] = [
-                        'id' => (int)$group->id,
-                        'name' => format_string($group->name, true, ['context' => $context]),
-                        'checked' => in_array((int)$group->id, $formattedselected, true),
-                    ];
-                }
-                if (!empty($groupitems)) {
-                    $groupings[] = [
-                        'id' => (int)$grouping->id,
-                        'name' => format_string($grouping->name, true, ['context' => $context]),
-                        'groups' => $groupitems,
-                    ];
-                }
-            }
-        }
-
-        $allgroups = groups_get_all_groups($this->course->id, 0, 0, 'g.*');
-        $ungroupedgroups = [];
-        foreach ($allgroups as $group) {
-            if (isset($usedgroupids[$group->id])) {
-                continue;
-            }
-            if (!groups_group_visible($group, $this->course, $context)) {
-                continue;
-            }
-            $ungroupedgroups[] = [
-                'id' => (int)$group->id,
-                'name' => format_string($group->name, true, ['context' => $context]),
-                'checked' => in_array((int)$group->id, $formattedselected, true),
-            ];
-        }
-
-        if (!empty($ungroupedgroups)) {
-            $groupings[] = [
-                'id' => 0,
-                'name' => get_string('printgroupsungrouped', 'block_faces'),
-                'groups' => $ungroupedgroups,
-                'isungrouped' => true,
-            ];
-        }
+        $groupdata = groups_helper::prepare_group_selection($this->course, $context, $this->groupids);
+        $selectedgroups = $groupdata['selectedgroups'];
 
         $fields = fields::for_name()->with_userpic();
         $requiredfields = array_diff($fields->get_required_fields(), ['id']);
@@ -147,8 +79,36 @@ class faces_print_page implements renderable, templatable {
         }
 
         $sections = [];
-        foreach ($selectedgroups as $group) {
-            $users = get_enrolled_users($context, '', (int)$group->id, $fieldlist, '', 0, 0, true);
+        if (!empty($selectedgroups)) {
+            foreach ($selectedgroups as $group) {
+                $users = get_enrolled_users($context, '', (int)$group->id, $fieldlist, '', 0, 0, true);
+                $users = array_values($users);
+                core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
+
+                $items = [];
+                foreach ($users as $user) {
+                    $picture = new user_picture($user);
+                    $picture->size = 100;
+                    $items[] = [
+                        'fullname' => fullname($user, true),
+                        'picture' => $picture->get_url($PAGE)->out(false),
+                        'profileurl' => (new moodle_url('/user/view.php', [
+                            'id' => $user->id,
+                            'course' => $this->course->id,
+                        ]))->out(false),
+                    ];
+                }
+
+                $sections[] = [
+                    'groupid' => (int)$group->id,
+                    'groupname' => format_string($group->name, true, ['context' => $context]),
+                    'users' => $items,
+                    'hasusers' => !empty($items),
+                    'nousers' => get_string('nousers', 'block_faces'),
+                ];
+            }
+        } else {
+            $users = get_enrolled_users($context, '', 0, $fieldlist, '', 0, 0, true);
             $users = array_values($users);
             core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
 
@@ -167,11 +127,12 @@ class faces_print_page implements renderable, templatable {
             }
 
             $sections[] = [
-                'groupid' => (int)$group->id,
-                'groupname' => format_string($group->name, true, ['context' => $context]),
+                'groupid' => 0,
+                'groupname' => get_string('showallfaces', 'block_faces'),
                 'users' => $items,
                 'hasusers' => !empty($items),
                 'nousers' => get_string('nousers', 'block_faces'),
+                'isall' => true,
             ];
         }
 
@@ -184,13 +145,13 @@ class faces_print_page implements renderable, templatable {
                 'orderby' => $this->orderby,
             ]))->out(false),
             'orderby' => $this->orderby,
-            'groupings' => $groupings,
-            'hasgroupings' => !empty($groupings),
+            'groupings' => $groupdata['groupings'],
+            'hasgroupings' => $groupdata['hasgroupings'],
             'sections' => $sections,
             'hassections' => !empty($sections),
             'nogroupsselected' => get_string('printnogroupsselected', 'block_faces'),
             'nogroupsavailable' => get_string('printnogroupsavailable', 'block_faces'),
-            'showreset' => !empty($sections),
+            'showreset' => !empty($selectedgroups),
             'reseturl' => (new moodle_url('/blocks/faces/print/page.php', [
                 'cid' => $this->course->id,
                 'orderby' => $this->orderby,
