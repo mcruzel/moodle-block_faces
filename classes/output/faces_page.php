@@ -24,6 +24,7 @@
 
 namespace block_faces\output;
 
+use block_faces\local\groups_helper;
 use core_collator;
 use core_user\fields;
 use moodle_url;
@@ -47,6 +48,7 @@ class faces_page implements renderable, templatable {
         private \stdClass $course,
         private int $groupid,
         private string $orderby,
+        private array $groupids = [],
         private bool $showfilters = true
     ) {
     }
@@ -58,9 +60,7 @@ class faces_page implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        global $PAGE, $CFG;
-
-        require_once($CFG->libdir . '/grouplib.php');
+        global $PAGE;
 
         $context = \context_course::instance($this->course->id);
 
@@ -69,10 +69,18 @@ class faces_page implements renderable, templatable {
             $this->orderby = 'firstname';
         }
 
-        $orderurl = new moodle_url('/blocks/faces/showfaces/show.php', [
+        $groupdata = groups_helper::prepare_group_selection($this->course, $context, $this->groupids);
+        $selectedgroups = $groupdata['selectedgroups'];
+        $selectedgroupids = $groupdata['selectedgroupids'];
+
+        $orderurlparams = [
             'cid' => $this->course->id,
             'groupid' => $this->groupid,
-        ]);
+        ];
+        if (!empty($selectedgroupids)) {
+            $orderurlparams['groupids'] = $selectedgroupids;
+        }
+        $orderurl = new moodle_url('/blocks/faces/showfaces/show.php', $orderurlparams);
         $groupurl = new moodle_url('/blocks/faces/showfaces/show.php', [
             'cid' => $this->course->id,
             'orderby' => $this->orderby,
@@ -99,21 +107,74 @@ class faces_page implements renderable, templatable {
         if (!empty($requiredfields)) {
             $fieldlist .= ',' . implode(',', $requiredfields);
         }
-        $users = get_enrolled_users($context, '', $this->groupid, $fieldlist, '', 0, 0, true);
-
-        $users = array_values($users);
-        core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
-
         $items = [];
-        foreach ($users as $user) {
-            $picture = new user_picture($user);
-            $picture->size = 100;
-            $items[] = [
-                'fullname' => fullname($user, true),
-                'picture' => $picture->get_url($PAGE)->out(false),
-                'profileurl' => (new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $this->course->id]))->out(false),
-            ];
+        $sections = [];
+        $displaysections = !empty($selectedgroups);
+
+        if ($displaysections) {
+            foreach ($selectedgroups as $group) {
+                $users = get_enrolled_users($context, '', (int)$group->id, $fieldlist, '', 0, 0, true);
+                $users = array_values($users);
+                core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
+
+                $groupitems = [];
+                foreach ($users as $user) {
+                    $picture = new user_picture($user);
+                    $picture->size = 100;
+                    $groupitems[] = [
+                        'fullname' => fullname($user, true),
+                        'picture' => $picture->get_url($PAGE)->out(false),
+                        'profileurl' => (new moodle_url('/user/view.php', [
+                            'id' => $user->id,
+                            'course' => $this->course->id,
+                        ]))->out(false),
+                    ];
+                }
+
+                $sections[] = [
+                    'groupid' => (int)$group->id,
+                    'groupname' => format_string($group->name, true, ['context' => $context]),
+                    'users' => $groupitems,
+                    'hasusers' => !empty($groupitems),
+                    'nousers' => get_string('nousers', 'block_faces'),
+                ];
+            }
+        } else {
+            $users = get_enrolled_users($context, '', $this->groupid, $fieldlist, '', 0, 0, true);
+
+            $users = array_values($users);
+            core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
+
+            foreach ($users as $user) {
+                $picture = new user_picture($user);
+                $picture->size = 100;
+                $items[] = [
+                    'fullname' => fullname($user, true),
+                    'picture' => $picture->get_url($PAGE)->out(false),
+                    'profileurl' => (new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $this->course->id]))->out(false),
+                ];
+            }
         }
+
+        $groupselection = [
+            'title' => get_string('showfacesbygroup', 'block_faces'),
+            'actionurl' => (new moodle_url('/blocks/faces/showfaces/show.php', [
+                'cid' => $this->course->id,
+            ]))->out(false),
+            'courseid' => $this->course->id,
+            'orderby' => $this->orderby,
+            'groupings' => $groupdata['groupings'],
+            'hasgroupings' => $groupdata['hasgroupings'],
+            'nogroupsavailable' => get_string('printnogroupsavailable', 'block_faces'),
+            'submitlabel' => get_string('printapplyselection', 'block_faces'),
+            'resetlabel' => get_string('printresetselection', 'block_faces'),
+            'showreset' => !empty($selectedgroups),
+            'reseturl' => (new moodle_url('/blocks/faces/showfaces/show.php', [
+                'cid' => $this->course->id,
+                'orderby' => $this->orderby,
+                'groupid' => $this->groupid,
+            ]))->out(false),
+        ];
 
         $templatecontext = [
             'coursename' => format_string($this->course->fullname, true, ['context' => $context]),
@@ -122,13 +183,12 @@ class faces_page implements renderable, templatable {
             'hasusers' => !empty($items),
             'nousers' => get_string('nousers', 'block_faces'),
             'showfilters' => $this->showfilters,
-            'printurl' => (new moodle_url('/blocks/faces/print/page.php', [
-                'cid' => $this->course->id,
-                'groupid' => $this->groupid,
-                'orderby' => $this->orderby,
-            ]))->out(false),
+            'printurl' => $this->build_print_url($selectedgroupids),
             'printlabel' => get_string('print', 'block_faces'),
             'isprint' => !$this->showfilters,
+            'displaysections' => $displaysections,
+            'sections' => $sections,
+            'groupselection' => $groupselection,
         ];
 
         if ($this->showfilters) {
@@ -137,5 +197,26 @@ class faces_page implements renderable, templatable {
         }
 
         return $templatecontext;
+    }
+
+    /**
+     * Build the print URL for the current selection.
+     *
+     * @param array $selectedgroupids Sanitised selected group ids.
+     * @return string
+     */
+    private function build_print_url(array $selectedgroupids): string {
+        $params = [
+            'cid' => $this->course->id,
+            'orderby' => $this->orderby,
+        ];
+
+        if (!empty($selectedgroupids)) {
+            $params['groupids'] = $selectedgroupids;
+        } else if ($this->groupid) {
+            $params['groupid'] = $this->groupid;
+        }
+
+        return (new moodle_url('/blocks/faces/print/page.php', $params))->out(false);
     }
 }

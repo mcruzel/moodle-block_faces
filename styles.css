@@ -160,6 +160,20 @@
     margin-top: 2rem;
 }
 
+.faces-groupselection {
+    margin: 2rem 0;
+}
+
+.faces-groupselection__header {
+    margin-bottom: 1rem;
+}
+
+.faces-groupselection__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
 @media (min-width: 576px) {
     .faces-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
