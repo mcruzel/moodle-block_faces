@@ -1,0 +1,80 @@
+{{! @template block_faces/faces_print_page }}
+<section class="faces-page faces-page--print faces-printgroups">
+    <header class="faces-page__header faces-printgroups__header">
+        <div class="faces-page__heading">
+            <h2 class="faces-page__title">{{coursename}}</h2>
+            <p class="faces-page__date">{{currentdate}}</p>
+        </div>
+
+        <form method="get" action="{{actionurl}}" class="faces-printgroups__form">
+            <input type="hidden" name="cid" value="{{courseid}}" />
+            <input type="hidden" name="orderby" value="{{orderby}}" />
+
+            {{#hasgroupings}}
+            <div class="faces-printgroups__groupings">
+                {{#groupings}}
+                <fieldset class="faces-printgroups__grouping">
+                    <legend class="faces-printgroups__grouping-title">{{name}}</legend>
+                    <ul class="faces-printgroups__groups" role="list">
+                        {{#groups}}
+                        <li class="faces-printgroups__group" role="listitem">
+                            <label class="faces-printgroups__group-label">
+                                <input type="checkbox" name="groupids[]" value="{{id}}" class="faces-printgroups__checkbox" {{#checked}}checked{{/checked}} />
+                                <span class="faces-printgroups__group-name">{{name}}</span>
+                            </label>
+                        </li>
+                        {{/groups}}
+                    </ul>
+                </fieldset>
+                {{/groupings}}
+            </div>
+            {{/hasgroupings}}
+
+            {{^hasgroupings}}
+            <div class="faces-page__empty faces-printgroups__empty">{{nogroupsavailable}}</div>
+            {{/hasgroupings}}
+
+            <div class="faces-printgroups__actions">
+                <button type="submit" class="btn btn-primary">{{submitlabel}}</button>
+                {{#showreset}}
+                <a class="btn btn-secondary" href="{{reseturl}}">{{resetlabel}}</a>
+                {{/showreset}}
+            </div>
+        </form>
+    </header>
+
+    {{#hassections}}
+    <div class="faces-printgroups__sections">
+        {{#sections}}
+        <section class="faces-printgroups__section">
+            <header class="faces-printgroups__section-header">
+                <h3 class="faces-printgroups__section-title">{{groupname}}</h3>
+            </header>
+
+            {{#hasusers}}
+            <ul class="faces-grid" role="list">
+                {{#users}}
+                <li class="faces-grid__item" role="listitem">
+                    <a class="faces-grid__link" href="{{profileurl}}">
+                        <span class="faces-grid__avatar">
+                            <img src="{{picture}}" alt="{{fullname}}" class="faces-grid__image" />
+                        </span>
+                        <span class="faces-grid__name">{{fullname}}</span>
+                    </a>
+                </li>
+                {{/users}}
+            </ul>
+            {{/hasusers}}
+
+            {{^hasusers}}
+            <div class="alert alert-info faces-page__empty">{{nousers}}</div>
+            {{/hasusers}}
+        </section>
+        {{/sections}}
+    </div>
+    {{/hassections}}
+
+    {{^hassections}}
+    <div class="faces-page__empty faces-printgroups__empty">{{nogroupsselected}}</div>
+    {{/hassections}}
+</section>
