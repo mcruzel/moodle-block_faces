@@ -136,6 +136,11 @@ class faces_print_page implements renderable, templatable {
             ];
         }
 
+        $hassections = !empty($sections);
+        if (!$hassections && empty($selectedgroups)) {
+            $hassections = true;
+        }
+
         return [
             'courseid' => $this->course->id,
             'coursename' => format_string($this->course->fullname, true, ['context' => $context]),
@@ -148,7 +153,7 @@ class faces_print_page implements renderable, templatable {
             'groupings' => $groupdata['groupings'],
             'hasgroupings' => $groupdata['hasgroupings'],
             'sections' => $sections,
-            'hassections' => !empty($sections),
+            'hassections' => $hassections,
             'nogroupsselected' => get_string('printnogroupsselected', 'block_faces'),
             'nogroupsavailable' => get_string('printnogroupsavailable', 'block_faces'),
             'showreset' => !empty($selectedgroups),
