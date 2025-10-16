@@ -31,6 +31,39 @@ defined('MOODLE_INTERNAL') || die();
  */
 class groups_helper {
     /**
+     * Validate a single group identifier against the course and current user visibility.
+     *
+     * @param \stdClass $course The course record.
+     * @param \context_course $context The course context.
+     * @param int $groupid The requested group identifier.
+     * @return \stdClass|null The group record when valid, otherwise null.
+     */
+    public static function validate_group(\stdClass $course, \context_course $context, int $groupid): ?\stdClass {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grouplib.php');
+
+        if ($groupid <= 0) {
+            return null;
+        }
+
+        $group = groups_get_group($groupid, '*', IGNORE_MISSING);
+        if (!$group) {
+            return null;
+        }
+
+        if ((int)$group->courseid !== (int)$course->id) {
+            return null;
+        }
+
+        if (!groups_group_visible($group, $course, $context)) {
+            return null;
+        }
+
+        return $group;
+    }
+
+    /**
      * Build the group selection data and selected groups list.
      *
      * @param \stdClass $course The course record.
@@ -46,16 +79,11 @@ class groups_helper {
         $selectedgroupids = array_values(array_unique(array_map('intval', $requestedgroupids)));
         $selectedgroups = [];
         foreach ($selectedgroupids as $groupid) {
-            if ($groupid <= 0) {
+            $group = self::validate_group($course, $context, $groupid);
+            if (!$group) {
                 continue;
             }
-            if (!$group = groups_get_group($groupid, '*')) {
-                continue;
-            }
-            if (!groups_group_visible($group, $course, $context)) {
-                continue;
-            }
-            $selectedgroups[$groupid] = $group;
+            $selectedgroups[(int)$group->id] = $group;
         }
 
         $groupings = [];
