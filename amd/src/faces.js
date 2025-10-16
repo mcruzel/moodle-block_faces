@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,19 +14,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * GDPR declaration
+ * Faces block JavaScript helpers.
  *
- * @package   block_faces
- * @copyright 2018 Kyle Goslin, Daniel McSweeney
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @module     block_faces/faces
+ * @copyright  2025 Moodle
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_faces\privacy;
+export const init = () => {
+    // Reserved for future interactive behaviour.
+};
 
-defined('MOODLE_INTERNAL') || die();
-
-class provider implements \core_privacy\local\metadata\null_provider {
-    public static function get_reason(): string {
-        return 'privacy:metadata';
-    }
-}
+export const initPrint = () => {
+    window.print();
+};

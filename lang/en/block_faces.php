@@ -27,8 +27,8 @@
 
 $string['pluginname'] = 'Faces';
 $string['faces'] = 'Faces';
-$string['faces:addinstance'] = 'Faces';
-$string['faces:myaddinstance'] = 'Faces';
+$string['faces:addinstance'] = 'Add a new Faces block';
+$string['faces:myaddinstance'] = 'Add a new Faces block to the Dashboard';
 
 $string['showallfaces'] = 'Show All Faces';
 $string['showfacesbygroup'] = 'Show Faces By Group';
@@ -36,12 +36,13 @@ $string['update'] = 'Update';
 
 $string['date'] = 'Date';
 $string['course'] = 'Course';
-$string['print'] = 'Print Faces';
+$string['print'] = 'Print faces';
 
 $string['orderby'] = 'Order By';
 $string['filter'] = 'Filter';
 $string['firstname'] = 'First Name';
 $string['lastname'] = 'Last Name';
-$string['faces:view'] = 'View';
+$string['faces:view'] = 'View the Faces block';
+$string['nousers'] = 'No participants found for the selected filters.';
 
-$string['privacy:null_reason'] = 'The Faces block displays information gathered from core moodle user information, but does not store any data itself.';
+$string['privacy:metadata'] = 'The Faces block displays information gathered from core Moodle user information, but does not store any data itself.';
