@@ -69,6 +69,9 @@ class faces_page implements renderable, templatable {
             $this->orderby = 'firstname';
         }
 
+        $validatedgroup = groups_helper::validate_group($this->course, $context, $this->groupid);
+        $this->groupid = $validatedgroup ? (int)$validatedgroup->id : 0;
+
         $groupdata = groups_helper::prepare_group_selection($this->course, $context, $this->groupids);
         $selectedgroups = $groupdata['selectedgroups'];
         $selectedgroupids = $groupdata['selectedgroupids'];
