@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../../../config.php');
 
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
+$groupids = optional_param_array('groupids', [], PARAM_INT);
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 
 $course = get_course($courseid);
@@ -35,16 +36,27 @@ require_capability('block/faces:view', $context);
 
 $url = new moodle_url('/blocks/faces/print/page.php', [
     'cid' => $course->id,
-    'groupid' => $groupid,
     'orderby' => $orderby,
 ]);
+if (!empty($groupids)) {
+    foreach ($groupids as $id) {
+        $url->param('groupids[]', (int)$id);
+    }
+} else if ($groupid) {
+    $url->param('groupid', $groupid);
+}
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('print');
 $PAGE->set_title(get_string('print', 'block_faces'));
 $PAGE->set_heading(format_string($course->fullname, true, ['context' => $context]));
-$renderable = new \block_faces\output\faces_page($course, $groupid, $orderby, false);
+$selectedgroupids = $groupids;
+if ($groupid) {
+    $selectedgroupids[] = $groupid;
+}
+
+$renderable = new \block_faces\output\faces_print_page($course, $selectedgroupids, $orderby);
 
 echo $OUTPUT->header();
 echo $OUTPUT->render($renderable);

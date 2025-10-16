@@ -37,6 +37,11 @@ $string['update'] = 'Update';
 $string['date'] = 'Date';
 $string['course'] = 'Course';
 $string['print'] = 'Print faces';
+$string['printapplyselection'] = 'Display selected groups';
+$string['printgroupsungrouped'] = 'Groups without a grouping';
+$string['printnogroupsavailable'] = 'No groups are available in this course.';
+$string['printnogroupsselected'] = 'Select at least one group to display the printable trombinoscope.';
+$string['printresetselection'] = 'Clear selection';
 
 $string['orderby'] = 'Order By';
 $string['filter'] = 'Filter';
