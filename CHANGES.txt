@@ -21,16 +21,17 @@ CHANGES
 ---------------------------------------------------
 
 
+Plugin Version 3.0
+For Moodle 4.5+
+
+Date: 15 Oct 2025
+- Migrated the Faces block to the Moodle output API with renderables and Mustache templates.
+- Added Moodle 4.5 LTS compatibility metadata and refreshed documentation.
+- Introduced explicit block capabilities and access checks (view/addinstance/myaddinstance).
+- Reimplemented the Faces pages with modern enrolment APIs, accessibility improvements and ES module JavaScript.
+
 Plugin Version 2.1
 For Moodle 3.5
-
-Date: 12/11/2018
-- Security update: User must be enrolled in a course to view the faces (Thanks to Bert van der Hooft)
-
-Date: July 2018
-- Moodle 3.5 compatible
-- GDPR comp added (thanks to LTS)
-- lang string for block title added. 
 
 Version 1.6
 Date: Monday April 25th 2016
