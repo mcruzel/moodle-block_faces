@@ -53,7 +53,6 @@ class block_faces extends block_base {
             return $this->content;
         }
 
-        require_login($COURSE);
         $context = context_course::instance($COURSE->id);
 
         if (!has_capability('block/faces:view', $context)) {
