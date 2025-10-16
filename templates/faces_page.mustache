@@ -17,19 +17,19 @@
         {{/showfilters}}
     </header>
 
-    {{#groupselection}}
+    {{#showgroupselection}}
     <section class="faces-groupselection faces-printgroups">
         <header class="faces-groupselection__header">
-            <h3 class="faces-groupselection__title">{{title}}</h3>
+            <h3 class="faces-groupselection__title">{{groupselection.title}}</h3>
         </header>
 
-        {{#hasgroupings}}
-        <form method="get" action="{{actionurl}}" class="faces-printgroups__form">
-            <input type="hidden" name="cid" value="{{courseid}}" />
-            <input type="hidden" name="orderby" value="{{orderby}}" />
+        {{#groupselection.hasgroupings}}
+        <form method="get" action="{{groupselection.actionurl}}" class="faces-printgroups__form">
+            <input type="hidden" name="cid" value="{{groupselection.courseid}}" />
+            <input type="hidden" name="orderby" value="{{groupselection.orderby}}" />
 
             <div class="faces-printgroups__groupings">
-                {{#groupings}}
+                {{#groupselection.groupings}}
                 <fieldset class="faces-printgroups__grouping">
                     <legend class="faces-printgroups__grouping-title">{{name}}</legend>
                     <ul class="faces-printgroups__groups" role="list">
@@ -43,23 +43,23 @@
                         {{/groups}}
                     </ul>
                 </fieldset>
-                {{/groupings}}
+                {{/groupselection.groupings}}
             </div>
 
             <div class="faces-printgroups__actions">
-                <button type="submit" class="btn btn-primary">{{submitlabel}}</button>
-                {{#showreset}}
-                <a class="btn btn-secondary" href="{{reseturl}}">{{resetlabel}}</a>
-                {{/showreset}}
+                <button type="submit" class="btn btn-primary">{{groupselection.submitlabel}}</button>
+                {{#groupselection.showreset}}
+                <a class="btn btn-secondary" href="{{groupselection.reseturl}}">{{groupselection.resetlabel}}</a>
+                {{/groupselection.showreset}}
             </div>
         </form>
-        {{/hasgroupings}}
+        {{/groupselection.hasgroupings}}
 
-        {{^hasgroupings}}
-        <div class="faces-page__empty faces-printgroups__empty">{{nogroupsavailable}}</div>
-        {{/hasgroupings}}
+        {{^groupselection.hasgroupings}}
+        <div class="faces-page__empty faces-printgroups__empty">{{groupselection.nogroupsavailable}}</div>
+        {{/groupselection.hasgroupings}}
     </section>
-    {{/groupselection}}
+    {{/showgroupselection}}
 
     {{#displaysections}}
     <div class="faces-printgroups__sections">

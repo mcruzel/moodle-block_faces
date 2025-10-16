@@ -189,6 +189,7 @@ class faces_page implements renderable, templatable {
             'displaysections' => $displaysections,
             'sections' => $sections,
             'groupselection' => $groupselection,
+            'showgroupselection' => true,
         ];
 
         if ($this->showfilters) {
