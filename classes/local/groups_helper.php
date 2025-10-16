@@ -56,7 +56,7 @@ class groups_helper {
             return null;
         }
 
-        if (!groups_group_visible($group, $course)) {
+        if (!groups_group_visible($group, $course, $context)) {
             return null;
         }
 
