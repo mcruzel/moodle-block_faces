@@ -94,7 +94,7 @@ class groups_helper {
                 $groupinggroups = groups_get_all_groups($course->id, 0, $grouping->id, 'g.*');
                 $groupitems = [];
                 foreach ($groupinggroups as $group) {
-                    if (!groups_group_visible($group, $course, $context)) {
+                    if (!groups_group_visible($group, $course)) {
                         continue;
                     }
                     $usedgroupids[$group->id] = true;
@@ -120,7 +120,7 @@ class groups_helper {
             if (isset($usedgroupids[$group->id])) {
                 continue;
             }
-            if (!groups_group_visible($group, $course, $context)) {
+            if (!groups_group_visible($group, $course)) {
                 continue;
             }
             $ungroupedgroups[] = [
