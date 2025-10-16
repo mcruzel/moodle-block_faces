@@ -1,0 +1,52 @@
+{{! @template block_faces/faces_page }}
+<section class="faces-page">
+    <header class="faces-page__header">
+        <h2 class="faces-page__title">{{coursename}}</h2>
+        <p class="faces-page__date">{{currentdate}}</p>
+    </header>
+
+    {{#showfilters}}
+    <div class="faces-page__controls">
+        <div class="faces-page__control">{{{orderbyselect}}}</div>
+        <div class="faces-page__control">{{{groupselect}}}</div>
+        <div class="faces-page__control faces-page__control--print">
+            <a class="btn btn-secondary" href="{{printurl}}" target="_blank">{{printlabel}}</a>
+        </div>
+    </div>
+    {{/showfilters}}
+
+    {{^showfilters}}
+    <div class="faces-page__printnote">
+        <strong>{{printlabel}}</strong>
+    </div>
+    {{/showfilters}}
+
+    {{#hasusers}}
+    <ul class="faces-grid" role="list">
+        {{#users}}
+        <li class="faces-grid__item" role="listitem">
+            <a class="faces-grid__link" href="{{profileurl}}">
+                <span class="faces-grid__avatar">
+                    <img src="{{picture}}" alt="{{fullname}}" class="faces-grid__image" />
+                </span>
+                <span class="faces-grid__name">{{fullname}}</span>
+            </a>
+        </li>
+        {{/users}}
+    </ul>
+    {{/hasusers}}
+    {{^hasusers}}
+    <div class="alert alert-info faces-page__empty">{{nousers}}</div>
+    {{/hasusers}}
+</section>
+
+{{#js}}
+require(['block_faces/faces'], function(module) {
+    {{#isprint}}
+    module.initPrint();
+    {{/isprint}}
+    {{^isprint}}
+    module.init();
+    {{/isprint}}
+});
+{{/js}}

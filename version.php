@@ -16,16 +16,19 @@
 // FACES BLOCK FOR MOODLE
 // by Kyle Goslin & Daniel McSweeney
 // Copyright 2013-2018 - Institute of Technology Blanchardstown.
-// 
+//
 /**
- * FACES BLOCK FOR MOODLE
+ * Faces block version details.
  *
  * @package    block_faces
  * @copyright  2018 Kyle Goslin, Daniel McSweeney
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-$plugin->version = 2018111200;      // The current module version (Date: YYYYMMDDXX)
-$plugin->requires = 2018051700.00;      // Requires this Moodle version
+
+defined('MOODLE_INTERNAL') || die();
+
 $plugin->component = 'block_faces';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '2.1';
+$plugin->version   = 2025101500;      // YYYYMMDDRR.
+$plugin->requires  = 2024100700;      // Moodle 4.5 (LTS).
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release   = '3.0 for Moodle 4.5+';
