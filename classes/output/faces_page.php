@@ -82,7 +82,7 @@ class faces_page implements renderable, templatable {
             'groupid' => $this->groupid,
         ]);
         if (!empty($selectedgroupids)) {
-            $orderurl->param('groupids', $selectedgroupids);
+            groups_helper::apply_groupids_to_url($orderurl, $selectedgroupids);
         }
         $groupurl = new moodle_url('/blocks/faces/showfaces/show.php', [
             'cid' => $this->course->id,
@@ -230,7 +230,7 @@ class faces_page implements renderable, templatable {
         ]);
 
         if (!empty($selectedgroupids)) {
-            $url->param('groupids', $selectedgroupids);
+            groups_helper::apply_groupids_to_url($url, $selectedgroupids);
         } else if ($this->groupid) {
             $url->param('groupid', $this->groupid);
         }

@@ -146,4 +146,20 @@ class groups_helper {
             'selectedgroupids' => array_keys($selectedgroups),
         ];
     }
+
+    /**
+     * Add the provided group identifiers to the supplied URL in a safe format.
+     *
+     * @param \moodle_url $url The URL to update.
+     * @param array $groupids The group identifiers to append to the URL.
+     * @return void
+     */
+    public static function apply_groupids_to_url(\moodle_url $url, array $groupids): void {
+        $groupids = array_values(array_unique(array_map('intval', $groupids)));
+        if (empty($groupids)) {
+            return;
+        }
+
+        $url->param('groupids', implode(',', $groupids));
+    }
 }
