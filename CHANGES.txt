@@ -22,7 +22,7 @@ CHANGES
 
 
 Plugin Version 3.0
-For Moodle 4.5+
+For Moodle 4.1+
 
 Date: 15 Oct 2025
 - Migrated the Faces block to the Moodle output API with renderables and Mustache templates.
