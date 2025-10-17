@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../../../config.php');
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
 $groupids = optional_param_array('groupids', [], PARAM_INT);
+$groupids = array_map('intval', $groupids);
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 
 $course = get_course($courseid);
@@ -34,15 +35,16 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('block/faces:view', $context);
 
-$urlparams = [
+$url = new moodle_url('/blocks/faces/showfaces/show.php', [
     'cid' => $course->id,
     'groupid' => $groupid,
     'orderby' => $orderby,
-];
+]);
 if (!empty($groupids)) {
-    $urlparams['groupids'] = array_map('intval', $groupids);
+    foreach ($groupids as $id) {
+        $url->param('groupids[]', (int)$id);
+    }
 }
-$url = new moodle_url('/blocks/faces/showfaces/show.php', $urlparams);
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);

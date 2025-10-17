@@ -42,6 +42,9 @@ $string['printgroupsungrouped'] = 'Groups without a grouping';
 $string['printnogroupsavailable'] = 'No groups are available in this course.';
 $string['printnogroupsselected'] = 'Select at least one group to display the printable trombinoscope.';
 $string['printresetselection'] = 'Clear selection';
+$string['printselectallgroups'] = 'Select all groups';
+$string['printdeselectallgroups'] = 'Deselect all groups';
+$string['printtogglesections'] = 'Show selected group sections';
 
 $string['orderby'] = 'Order By';
 $string['filter'] = 'Filter';

@@ -27,6 +27,7 @@ namespace block_faces\output;
 use block_faces\local\groups_helper;
 use core_collator;
 use core_user\fields;
+use html_writer;
 use moodle_url;
 use renderable;
 use renderer_base;
@@ -76,14 +77,15 @@ class faces_page implements renderable, templatable {
         $selectedgroups = $groupdata['selectedgroups'];
         $selectedgroupids = $groupdata['selectedgroupids'];
 
-        $orderurlparams = [
+        $orderurl = new moodle_url('/blocks/faces/showfaces/show.php', [
             'cid' => $this->course->id,
             'groupid' => $this->groupid,
-        ];
+        ]);
         if (!empty($selectedgroupids)) {
-            $orderurlparams['groupids'] = $selectedgroupids;
+            foreach ($selectedgroupids as $selectedgroupid) {
+                $orderurl->param('groupids[]', (int)$selectedgroupid);
+            }
         }
-        $orderurl = new moodle_url('/blocks/faces/showfaces/show.php', $orderurlparams);
         $groupurl = new moodle_url('/blocks/faces/showfaces/show.php', [
             'cid' => $this->course->id,
             'orderby' => $this->orderby,
@@ -177,7 +179,17 @@ class faces_page implements renderable, templatable {
                 'orderby' => $this->orderby,
                 'groupid' => $this->groupid,
             ]))->out(false),
+            'selectalllabel' => get_string('printselectallgroups', 'block_faces'),
+            'deselectalllabel' => get_string('printdeselectallgroups', 'block_faces'),
         ];
+
+        if (!empty($groupselection['groupings'])) {
+            foreach ($groupselection['groupings'] as &$grouping) {
+                $grouping['selectalllabel'] = $groupselection['selectalllabel'];
+                $grouping['deselectalllabel'] = $groupselection['deselectalllabel'];
+            }
+            unset($grouping);
+        }
 
         $templatecontext = [
             'coursename' => format_string($this->course->fullname, true, ['context' => $context]),
@@ -191,6 +203,8 @@ class faces_page implements renderable, templatable {
             'isprint' => !$this->showfilters,
             'displaysections' => $displaysections,
             'sections' => $sections,
+            'sectionsid' => html_writer::random_id('faces-sections'),
+            'sectionstogglelabel' => get_string('printtogglesections', 'block_faces'),
             'groupselection' => $groupselection,
             'showgroupselection' => true,
         ];
@@ -210,17 +224,19 @@ class faces_page implements renderable, templatable {
      * @return string
      */
     private function build_print_url(array $selectedgroupids): string {
-        $params = [
+        $url = new moodle_url('/blocks/faces/print/page.php', [
             'cid' => $this->course->id,
             'orderby' => $this->orderby,
-        ];
+        ]);
 
         if (!empty($selectedgroupids)) {
-            $params['groupids'] = $selectedgroupids;
+            foreach ($selectedgroupids as $selectedgroupid) {
+                $url->param('groupids[]', (int)$selectedgroupid);
+            }
         } else if ($this->groupid) {
-            $params['groupid'] = $this->groupid;
+            $url->param('groupid', $this->groupid);
         }
 
-        return (new moodle_url('/blocks/faces/print/page.php', $params))->out(false);
+        return $url->out(false);
     }
 }
