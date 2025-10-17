@@ -26,8 +26,17 @@ require_once(__DIR__ . '/../../../config.php');
 
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
-$groupids = optional_param_array('groupids', [], PARAM_INT);
-$groupids = array_map('intval', $groupids);
+$groupids = optional_param_array('groupids', null, PARAM_INT);
+if (!is_array($groupids)) {
+    $groupidscsv = optional_param('groupids', '', PARAM_SEQUENCE);
+    if ($groupidscsv === '') {
+        $groupids = [];
+    } else {
+        $groupids = array_map('intval', preg_split('/\s*,\s*/', $groupidscsv, -1, PREG_SPLIT_NO_EMPTY));
+    }
+} else {
+    $groupids = array_map('intval', $groupids);
+}
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 
 $course = get_course($courseid);
@@ -40,7 +49,7 @@ $url = new moodle_url('/blocks/faces/print/page.php', [
     'orderby' => $orderby,
 ]);
 if (!empty($groupids)) {
-    $url->param('groupids', $groupids);
+    \block_faces\local\groups_helper::apply_groupids_to_url($url, $groupids);
 } else if ($groupid) {
     $url->param('groupid', $groupid);
 }
