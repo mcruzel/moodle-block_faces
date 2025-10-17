@@ -182,6 +182,10 @@
     margin-top: 1rem;
 }
 
+.faces-groupselection__actions--persistent {
+    margin-bottom: 1rem;
+}
+
 @media (min-width: 576px) {
     .faces-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));

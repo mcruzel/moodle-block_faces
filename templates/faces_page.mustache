@@ -34,13 +34,22 @@
             </button>
         </header>
 
+        {{#groupselection.hasgroupings}}
+        <div class="faces-groupselection__actions faces-printgroups__actions faces-groupselection__actions--persistent">
+            <button type="submit" class="btn btn-primary" form="{{groupselection.formid}}">{{groupselection.submitlabel}}</button>
+            {{#groupselection.showreset}}
+            <a class="btn btn-secondary" href="{{groupselection.reseturl}}">{{groupselection.resetlabel}}</a>
+            {{/groupselection.showreset}}
+        </div>
+        {{/groupselection.hasgroupings}}
+
         <div
             id="{{groupselection.contentid}}"
             class="faces-groupselection__content faces-printgroups__sections-content"
             {{^groupselection.expanded}}hidden{{/groupselection.expanded}}
         >
             {{#groupselection.hasgroupings}}
-            <form method="get" action="{{groupselection.actionurl}}" class="faces-printgroups__form">
+            <form method="get" action="{{groupselection.actionurl}}" class="faces-printgroups__form" id="{{groupselection.formid}}">
                 <input type="hidden" name="cid" value="{{groupselection.courseid}}" />
                 <input type="hidden" name="orderby" value="{{groupselection.orderby}}" />
 
@@ -72,13 +81,6 @@
                         </div>
                     </fieldset>
                     {{/groupselection.groupings}}
-                </div>
-
-                <div class="faces-printgroups__actions">
-                    <button type="submit" class="btn btn-primary">{{groupselection.submitlabel}}</button>
-                    {{#groupselection.showreset}}
-                    <a class="btn btn-secondary" href="{{groupselection.reseturl}}">{{groupselection.resetlabel}}</a>
-                    {{/groupselection.showreset}}
                 </div>
             </form>
             {{/groupselection.hasgroupings}}
