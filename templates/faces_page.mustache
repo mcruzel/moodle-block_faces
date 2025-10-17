@@ -42,6 +42,18 @@
                         </li>
                         {{/groups}}
                     </ul>
+                    <div class="faces-printgroups__grouping-togglecontainer">
+                        <button
+                            type="button"
+                            class="faces-printgroups__grouping-toggle"
+                            data-action="toggle-grouping"
+                            data-select-label="{{selectalllabel}}"
+                            data-deselect-label="{{deselectalllabel}}"
+                            aria-pressed="false"
+                        >
+                            <em class="faces-printgroups__grouping-toggle-text">{{selectalllabel}}</em>
+                        </button>
+                    </div>
                 </fieldset>
                 {{/groupselection.groupings}}
             </div>
@@ -62,33 +74,51 @@
     {{/showgroupselection}}
 
     {{#displaysections}}
-    <div class="faces-printgroups__sections">
-        {{#sections}}
-        <section class="faces-printgroups__section">
-            <header class="faces-printgroups__section-header">
-                <h3 class="faces-printgroups__section-title">{{groupname}}</h3>
-            </header>
+    <div class="faces-printgroups__sections" data-region="faces-sections">
+        <button
+            type="button"
+            class="faces-printgroups__sections-toggle"
+            data-action="toggle-sections"
+            data-target="{{sectionsid}}"
+            aria-controls="{{sectionsid}}"
+            aria-expanded="false"
+        >
+            <span class="faces-printgroups__sections-toggle-icon" data-region="toggle-icon" aria-hidden="true"></span>
+            <span class="faces-printgroups__sections-toggle-label">{{sectionstogglelabel}}</span>
+        </button>
+        <div
+            id="{{sectionsid}}"
+            class="faces-printgroups__sections-content"
+            data-region="faces-sections-content"
+            hidden
+        >
+            {{#sections}}
+            <section class="faces-printgroups__section">
+                <header class="faces-printgroups__section-header">
+                    <h3 class="faces-printgroups__section-title">{{groupname}}</h3>
+                </header>
 
-            {{#hasusers}}
-            <ul class="faces-grid" role="list">
-                {{#users}}
-                <li class="faces-grid__item" role="listitem">
-                    <a class="faces-grid__link" href="{{profileurl}}">
-                        <span class="faces-grid__avatar">
-                            <img src="{{picture}}" alt="{{fullname}}" class="faces-grid__image" />
-                        </span>
-                        <span class="faces-grid__name">{{fullname}}</span>
-                    </a>
-                </li>
-                {{/users}}
-            </ul>
-            {{/hasusers}}
+                {{#hasusers}}
+                <ul class="faces-grid" role="list">
+                    {{#users}}
+                    <li class="faces-grid__item" role="listitem">
+                        <a class="faces-grid__link" href="{{profileurl}}">
+                            <span class="faces-grid__avatar">
+                                <img src="{{picture}}" alt="{{fullname}}" class="faces-grid__image" />
+                            </span>
+                            <span class="faces-grid__name">{{fullname}}</span>
+                        </a>
+                    </li>
+                    {{/users}}
+                </ul>
+                {{/hasusers}}
 
-            {{^hasusers}}
-            <div class="alert alert-info faces-page__empty">{{nousers}}</div>
-            {{/hasusers}}
-        </section>
-        {{/sections}}
+                {{^hasusers}}
+                <div class="alert alert-info faces-page__empty">{{nousers}}</div>
+                {{/hasusers}}
+            </section>
+            {{/sections}}
+        </div>
     </div>
     {{/displaysections}}
 
