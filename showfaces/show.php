@@ -41,9 +41,7 @@ $url = new moodle_url('/blocks/faces/showfaces/show.php', [
     'orderby' => $orderby,
 ]);
 if (!empty($groupids)) {
-    foreach ($groupids as $id) {
-        $url->param('groupids[]', (int)$id);
-    }
+    $url->param('groupids', $groupids);
 }
 
 $PAGE->set_url($url);

@@ -45,6 +45,7 @@ $string['printresetselection'] = 'Clear selection';
 $string['printselectallgroups'] = 'Select all groups';
 $string['printdeselectallgroups'] = 'Deselect all groups';
 $string['printtogglesections'] = 'Show selected group sections';
+$string['printtogglegroupselection'] = 'Show group selection';
 
 $string['orderby'] = 'Order By';
 $string['filter'] = 'Filter';

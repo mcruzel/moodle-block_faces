@@ -82,9 +82,7 @@ class faces_page implements renderable, templatable {
             'groupid' => $this->groupid,
         ]);
         if (!empty($selectedgroupids)) {
-            foreach ($selectedgroupids as $selectedgroupid) {
-                $orderurl->param('groupids[]', (int)$selectedgroupid);
-            }
+            $orderurl->param('groupids', $selectedgroupids);
         }
         $groupurl = new moodle_url('/blocks/faces/showfaces/show.php', [
             'cid' => $this->course->id,
@@ -181,6 +179,9 @@ class faces_page implements renderable, templatable {
             ]))->out(false),
             'selectalllabel' => get_string('printselectallgroups', 'block_faces'),
             'deselectalllabel' => get_string('printdeselectallgroups', 'block_faces'),
+            'contentid' => html_writer::random_id('faces-groupselection'),
+            'togglelabel' => get_string('printtogglegroupselection', 'block_faces'),
+            'expanded' => empty($selectedgroups),
         ];
 
         if (!empty($groupselection['groupings'])) {
@@ -203,8 +204,6 @@ class faces_page implements renderable, templatable {
             'isprint' => !$this->showfilters,
             'displaysections' => $displaysections,
             'sections' => $sections,
-            'sectionsid' => html_writer::random_id('faces-sections'),
-            'sectionstogglelabel' => get_string('printtogglesections', 'block_faces'),
             'groupselection' => $groupselection,
             'showgroupselection' => true,
         ];
@@ -230,9 +229,7 @@ class faces_page implements renderable, templatable {
         ]);
 
         if (!empty($selectedgroupids)) {
-            foreach ($selectedgroupids as $selectedgroupid) {
-                $url->param('groupids[]', (int)$selectedgroupid);
-            }
+            $url->param('groupids', $selectedgroupids);
         } else if ($this->groupid) {
             $url->param('groupid', $this->groupid);
         }

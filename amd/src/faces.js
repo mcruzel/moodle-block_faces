@@ -21,11 +21,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-const SELECTOR_SECTIONS_TOGGLE = '[data-action="toggle-sections"]';
+const SELECTOR_COLLAPSIBLE_TOGGLE = '[data-action="toggle-collapsible"]';
 const SELECTOR_GROUPING_TOGGLE = '[data-action="toggle-grouping"]';
 
-const initSectionsToggle = () => {
-    document.querySelectorAll(SELECTOR_SECTIONS_TOGGLE).forEach((button) => {
+const initCollapsibleToggles = () => {
+    document.querySelectorAll(SELECTOR_COLLAPSIBLE_TOGGLE).forEach((button) => {
         const targetId = button.getAttribute('data-target');
         if (!targetId) {
             return;
@@ -41,7 +41,8 @@ const initSectionsToggle = () => {
             content.hidden = !expanded;
         };
 
-        setExpanded(false);
+        const defaultExpanded = button.getAttribute('aria-expanded') === 'true';
+        setExpanded(defaultExpanded);
 
         button.addEventListener('click', (event) => {
             event.preventDefault();
@@ -99,7 +100,7 @@ const initGroupingToggles = () => {
 };
 
 export const init = () => {
-    initSectionsToggle();
+    initCollapsibleToggles();
     initGroupingToggles();
 };
 
