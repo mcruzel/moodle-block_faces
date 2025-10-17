@@ -142,27 +142,11 @@ class faces_print_page implements renderable, templatable {
         }
 
         return [
-            'courseid' => $this->course->id,
             'coursename' => format_string($this->course->fullname, true, ['context' => $context]),
             'currentdate' => userdate(time(), get_string('strftimedate', 'langconfig')),
-            'actionurl' => (new moodle_url('/blocks/faces/print/page.php', [
-                'cid' => $this->course->id,
-                'orderby' => $this->orderby,
-            ]))->out(false),
-            'orderby' => $this->orderby,
-            'groupings' => $groupdata['groupings'],
-            'hasgroupings' => $groupdata['hasgroupings'],
             'sections' => $sections,
             'hassections' => $hassections,
             'nogroupsselected' => get_string('printnogroupsselected', 'block_faces'),
-            'nogroupsavailable' => get_string('printnogroupsavailable', 'block_faces'),
-            'showreset' => !empty($selectedgroups),
-            'reseturl' => (new moodle_url('/blocks/faces/print/page.php', [
-                'cid' => $this->course->id,
-                'orderby' => $this->orderby,
-            ]))->out(false),
-            'submitlabel' => get_string('printapplyselection', 'block_faces'),
-            'resetlabel' => get_string('printresetselection', 'block_faces'),
         ];
     }
 }
