@@ -164,6 +164,7 @@ class faces_page implements renderable, templatable {
             'actionurl' => (new moodle_url('/blocks/faces/showfaces/show.php', [
                 'cid' => $this->course->id,
             ]))->out(false),
+            'formid' => html_writer::random_id('faces-groupselection-form'),
             'courseid' => $this->course->id,
             'orderby' => $this->orderby,
             'groupings' => $groupdata['groupings'],

@@ -27,6 +27,9 @@ require_once(__DIR__ . '/../../../config.php');
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
 $groupids = optional_param_array('groupids', [], PARAM_INT);
+if (!is_array($groupids)) {
+    $groupids = [];
+}
 $groupids = array_map('intval', $groupids);
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 
