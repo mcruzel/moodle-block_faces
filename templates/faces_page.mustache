@@ -18,80 +18,81 @@
     </header>
 
     {{#showgroupselection}}
-    <section class="faces-groupselection faces-printgroups">
+    <section class="faces-groupselection faces-printgroups" data-region="faces-groupselection">
         <header class="faces-groupselection__header">
             <h3 class="faces-groupselection__title">{{groupselection.title}}</h3>
+            <button
+                type="button"
+                class="faces-printgroups__sections-toggle"
+                data-action="toggle-collapsible"
+                data-target="{{groupselection.contentid}}"
+                aria-controls="{{groupselection.contentid}}"
+                aria-expanded="{{#groupselection.expanded}}true{{/groupselection.expanded}}{{^groupselection.expanded}}false{{/groupselection.expanded}}"
+            >
+                <span class="faces-printgroups__sections-toggle-icon" aria-hidden="true"></span>
+                <span class="faces-printgroups__sections-toggle-label">{{groupselection.togglelabel}}</span>
+            </button>
         </header>
 
-        {{#groupselection.hasgroupings}}
-        <form method="get" action="{{groupselection.actionurl}}" class="faces-printgroups__form">
-            <input type="hidden" name="cid" value="{{groupselection.courseid}}" />
-            <input type="hidden" name="orderby" value="{{groupselection.orderby}}" />
+        <div
+            id="{{groupselection.contentid}}"
+            class="faces-groupselection__content faces-printgroups__sections-content"
+            {{^groupselection.expanded}}hidden{{/groupselection.expanded}}
+        >
+            {{#groupselection.hasgroupings}}
+            <form method="get" action="{{groupselection.actionurl}}" class="faces-printgroups__form">
+                <input type="hidden" name="cid" value="{{groupselection.courseid}}" />
+                <input type="hidden" name="orderby" value="{{groupselection.orderby}}" />
 
-            <div class="faces-printgroups__groupings">
-                {{#groupselection.groupings}}
-                <fieldset class="faces-printgroups__grouping">
-                    <legend class="faces-printgroups__grouping-title">{{name}}</legend>
-                    <ul class="faces-printgroups__groups" role="list">
-                        {{#groups}}
-                        <li class="faces-printgroups__group" role="listitem">
-                            <label class="faces-printgroups__group-label">
-                                <input type="checkbox" name="groupids[]" value="{{id}}" class="faces-printgroups__checkbox" {{#checked}}checked{{/checked}} />
-                                <span class="faces-printgroups__group-name">{{name}}</span>
-                            </label>
-                        </li>
-                        {{/groups}}
-                    </ul>
-                    <div class="faces-printgroups__grouping-togglecontainer">
-                        <button
-                            type="button"
-                            class="faces-printgroups__grouping-toggle"
-                            data-action="toggle-grouping"
-                            data-select-label="{{selectalllabel}}"
-                            data-deselect-label="{{deselectalllabel}}"
-                            aria-pressed="false"
-                        >
-                            <em class="faces-printgroups__grouping-toggle-text">{{selectalllabel}}</em>
-                        </button>
-                    </div>
-                </fieldset>
-                {{/groupselection.groupings}}
-            </div>
+                <div class="faces-printgroups__groupings">
+                    {{#groupselection.groupings}}
+                    <fieldset class="faces-printgroups__grouping">
+                        <legend class="faces-printgroups__grouping-title">{{name}}</legend>
+                        <ul class="faces-printgroups__groups" role="list">
+                            {{#groups}}
+                            <li class="faces-printgroups__group" role="listitem">
+                                <label class="faces-printgroups__group-label">
+                                    <input type="checkbox" name="groupids[]" value="{{id}}" class="faces-printgroups__checkbox" {{#checked}}checked{{/checked}} />
+                                    <span class="faces-printgroups__group-name">{{name}}</span>
+                                </label>
+                            </li>
+                            {{/groups}}
+                        </ul>
+                        <div class="faces-printgroups__grouping-togglecontainer">
+                            <button
+                                type="button"
+                                class="faces-printgroups__grouping-toggle"
+                                data-action="toggle-grouping"
+                                data-select-label="{{selectalllabel}}"
+                                data-deselect-label="{{deselectalllabel}}"
+                                aria-pressed="false"
+                            >
+                                <em class="faces-printgroups__grouping-toggle-text">{{selectalllabel}}</em>
+                            </button>
+                        </div>
+                    </fieldset>
+                    {{/groupselection.groupings}}
+                </div>
 
-            <div class="faces-printgroups__actions">
-                <button type="submit" class="btn btn-primary">{{groupselection.submitlabel}}</button>
-                {{#groupselection.showreset}}
-                <a class="btn btn-secondary" href="{{groupselection.reseturl}}">{{groupselection.resetlabel}}</a>
-                {{/groupselection.showreset}}
-            </div>
-        </form>
-        {{/groupselection.hasgroupings}}
+                <div class="faces-printgroups__actions">
+                    <button type="submit" class="btn btn-primary">{{groupselection.submitlabel}}</button>
+                    {{#groupselection.showreset}}
+                    <a class="btn btn-secondary" href="{{groupselection.reseturl}}">{{groupselection.resetlabel}}</a>
+                    {{/groupselection.showreset}}
+                </div>
+            </form>
+            {{/groupselection.hasgroupings}}
 
-        {{^groupselection.hasgroupings}}
-        <div class="faces-page__empty faces-printgroups__empty">{{groupselection.nogroupsavailable}}</div>
-        {{/groupselection.hasgroupings}}
+            {{^groupselection.hasgroupings}}
+            <div class="faces-page__empty faces-printgroups__empty">{{groupselection.nogroupsavailable}}</div>
+            {{/groupselection.hasgroupings}}
+        </div>
     </section>
     {{/showgroupselection}}
 
     {{#displaysections}}
     <div class="faces-printgroups__sections" data-region="faces-sections">
-        <button
-            type="button"
-            class="faces-printgroups__sections-toggle"
-            data-action="toggle-sections"
-            data-target="{{sectionsid}}"
-            aria-controls="{{sectionsid}}"
-            aria-expanded="false"
-        >
-            <span class="faces-printgroups__sections-toggle-icon" data-region="toggle-icon" aria-hidden="true"></span>
-            <span class="faces-printgroups__sections-toggle-label">{{sectionstogglelabel}}</span>
-        </button>
-        <div
-            id="{{sectionsid}}"
-            class="faces-printgroups__sections-content"
-            data-region="faces-sections-content"
-            hidden
-        >
+        <div class="faces-printgroups__sections-content" data-region="faces-sections-content">
             {{#sections}}
             <section class="faces-printgroups__section">
                 <header class="faces-printgroups__section-header">

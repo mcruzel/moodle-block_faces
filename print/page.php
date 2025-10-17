@@ -27,6 +27,7 @@ require_once(__DIR__ . '/../../../config.php');
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
 $groupids = optional_param_array('groupids', [], PARAM_INT);
+$groupids = array_map('intval', $groupids);
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 
 $course = get_course($courseid);
@@ -39,9 +40,7 @@ $url = new moodle_url('/blocks/faces/print/page.php', [
     'orderby' => $orderby,
 ]);
 if (!empty($groupids)) {
-    foreach ($groupids as $id) {
-        $url->param('groupids[]', (int)$id);
-    }
+    $url->param('groupids', $groupids);
 } else if ($groupid) {
     $url->param('groupid', $groupid);
 }
@@ -55,6 +54,7 @@ $selectedgroupids = $groupids;
 if ($groupid) {
     $selectedgroupids[] = $groupid;
 }
+$selectedgroupids = array_values(array_unique(array_map('intval', $selectedgroupids)));
 
 $renderable = new \block_faces\output\faces_print_page($course, $selectedgroupids, $orderby);
 
