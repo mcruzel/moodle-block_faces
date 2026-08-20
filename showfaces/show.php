@@ -27,18 +27,24 @@ require_once(__DIR__ . '/../../../config.php');
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
 // The group selection form submits 'groupids[]' checkboxes, while generated links
-// carry the same selection as a CSV under the scalar name 'groupidlist'. Never read
-// the same parameter name through both optional_param() and optional_param_array().
-$groupids = optional_param_array('groupids', null, PARAM_INT);
-if ($groupids === null) {
+// carry the same selection as a CSV under the scalar name 'groupidlist'. Links from
+// versions up to 3.0.x carried the CSV under 'groupids' itself, so that scalar form
+// is still honoured. The raw type decides which reader to use so the same name is
+// never read through both optional_param() and optional_param_array().
+$rawgroupids = $_POST['groupids'] ?? $_GET['groupids'] ?? null;
+if (is_array($rawgroupids)) {
+    $groupids = array_map('intval', optional_param_array('groupids', [], PARAM_INT));
+} else {
     $groupidlist = optional_param('groupidlist', '', PARAM_SEQUENCE);
+    if ($groupidlist === '' && is_string($rawgroupids)) {
+        // Legacy bookmarked link: groupids passed as a scalar CSV.
+        $groupidlist = optional_param('groupids', '', PARAM_SEQUENCE);
+    }
     if ($groupidlist === '') {
         $groupids = [];
     } else {
         $groupids = array_map('intval', preg_split('/,/', $groupidlist, -1, PREG_SPLIT_NO_EMPTY));
     }
-} else {
-    $groupids = array_map('intval', $groupids);
 }
 $orderby = optional_param('orderby', 'firstname', PARAM_ALPHANUMEXT);
 

@@ -103,10 +103,13 @@ class faces_page implements renderable, templatable {
             'firstname' => get_string('firstname', 'block_faces'),
             'lastname' => get_string('lastname', 'block_faces'),
         ];
-        $groupoptions = [];
-        if ($canseeall) {
-            $groupoptions[0] = get_string('showallfaces', 'block_faces');
-        }
+        // Option 0 must always exist so the select reflects the current (default) view;
+        // for restricted users it leads to the "own groups" view, not the full list.
+        $groupoptions = [
+            0 => $canseeall
+                ? get_string('showallfaces', 'block_faces')
+                : get_string('showmygroups', 'block_faces'),
+        ];
         $groups = groups_get_all_groups($this->course->id, 0, 0, 'g.id, g.name');
         foreach ($groups as $group) {
             if (!groups_group_visible($group->id, $this->course)) {

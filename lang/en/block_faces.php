@@ -45,3 +45,4 @@ $string['printtogglegroupselection'] = 'Show group selection';
 $string['privacy:metadata'] = 'The Faces block displays information gathered from core Moodle user information, but does not store any data itself.';
 $string['showallfaces'] = 'Show All Faces';
 $string['showfacesbygroup'] = 'Show Faces By Group';
+$string['showmygroups'] = 'Show my groups';
