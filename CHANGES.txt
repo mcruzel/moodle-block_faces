@@ -21,6 +21,29 @@ CHANGES
 ---------------------------------------------------
 
 
+Plugin Version 3.1.0
+For Moodle 4.5 - 5.2
+
+Date: 20 Aug 2026
+- Compatibility with Moodle 5.2 (supported range: Moodle 4.5 LTS to 5.2,
+  PHP 8.1+ on 4.5, PHP 8.3-8.4 on 5.2). Since Moodle 5.1 the code installs
+  under public/blocks/faces (webroot restructuring).
+- Privacy fix: separate groups mode is now respected. Users without the
+  moodle/site:accessallgroups capability no longer see all enrolled users
+  or all groups; the default view is restricted to their own groups.
+- Fixed groups_group_visible() calls to pass a group id instead of a group
+  record.
+- Fixed a debugging notice caused by reading the 'groupids' parameter both
+  as an array and as a scalar (links now use a separate 'groupidlist'
+  parameter).
+- Full names are now displayed according to the moodle/site:viewfullnames
+  capability.
+- The printable page automatically opens the print dialog again.
+- Moved the block icon to pix/ and load it through the theme image API.
+- Removed the unused block/faces:myaddinstance capability and unused
+  language strings; documentation, docblocks and template headers cleanup.
+
+
 Plugin Version 3.0
 For Moodle 4.1+
 

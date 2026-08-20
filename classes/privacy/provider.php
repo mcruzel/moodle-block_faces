@@ -26,7 +26,20 @@ namespace block_faces\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Privacy provider declaring that the Faces block stores no personal data.
+ *
+ * @package   block_faces
+ * @copyright 2018 Kyle Goslin, Daniel McSweeney
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier explaining why this plugin stores no data.
+     *
+     * @return string
+     */
     public static function get_reason(): string {
         return 'privacy:metadata';
     }

@@ -35,6 +35,13 @@ use single_select;
 use templatable;
 use user_picture;
 
+/**
+ * Renderable that shows the faces of course participants with filtering controls.
+ *
+ * @package   block_faces
+ * @copyright 2025 Moodle
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class faces_page implements renderable, templatable {
 
     /**
@@ -43,6 +50,7 @@ class faces_page implements renderable, templatable {
      * @param \stdClass $course
      * @param int $groupid
      * @param string $orderby
+     * @param array $groupids
      * @param bool $showfilters
      */
     public function __construct(
@@ -61,9 +69,11 @@ class faces_page implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
-        global $PAGE;
+        global $USER;
 
         $context = \context_course::instance($this->course->id);
+        $canseeall = groups_helper::can_see_all_participants($this->course, $context);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         $validorders = ['firstname', 'lastname'];
         if (!in_array($this->orderby, $validorders, true)) {
@@ -93,9 +103,15 @@ class faces_page implements renderable, templatable {
             'firstname' => get_string('firstname', 'block_faces'),
             'lastname' => get_string('lastname', 'block_faces'),
         ];
-        $groupoptions = [0 => get_string('showallfaces', 'block_faces')];
+        $groupoptions = [];
+        if ($canseeall) {
+            $groupoptions[0] = get_string('showallfaces', 'block_faces');
+        }
         $groups = groups_get_all_groups($this->course->id, 0, 0, 'g.id, g.name');
         foreach ($groups as $group) {
+            if (!groups_group_visible($group->id, $this->course)) {
+                continue;
+            }
             $groupoptions[(int)$group->id] = format_string($group->name, true, ['context' => $context]);
         }
 
@@ -110,54 +126,28 @@ class faces_page implements renderable, templatable {
         if (!empty($requiredfields)) {
             $fieldlist .= ',' . implode(',', $requiredfields);
         }
+
+        // In separate groups mode without the accessallgroups capability the user must
+        // never see the full participant list: the default view (no group selected)
+        // falls back to the groups the current user belongs to.
+        $canlistall = $canseeall || $this->groupid > 0;
+        $sectiongroups = $selectedgroups;
+        if (empty($sectiongroups) && !$canlistall) {
+            $sectiongroups = groups_get_all_groups($this->course->id, $USER->id);
+        }
+
         $items = [];
         $sections = [];
-        $displaysections = !empty($selectedgroups);
-
+        $displaysections = !empty($sectiongroups);
         if ($displaysections) {
-            foreach ($selectedgroups as $group) {
-                $users = get_enrolled_users($context, '', (int)$group->id, $fieldlist, '', 0, 0, true);
-                $users = array_values($users);
-                core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
-
-                $groupitems = [];
-                foreach ($users as $user) {
-                    $picture = new user_picture($user);
-                    $picture->size = 100;
-                    $groupitems[] = [
-                        'fullname' => fullname($user, true),
-                        'picture' => $picture->get_url($PAGE)->out(false),
-                        'profileurl' => (new moodle_url('/user/view.php', [
-                            'id' => $user->id,
-                            'course' => $this->course->id,
-                        ]))->out(false),
-                    ];
-                }
-
-                $sections[] = [
-                    'groupid' => (int)$group->id,
-                    'groupname' => format_string($group->name, true, ['context' => $context]),
-                    'users' => $groupitems,
-                    'hasusers' => !empty($groupitems),
-                    'nousers' => get_string('nousers', 'block_faces'),
-                ];
+            foreach ($sectiongroups as $group) {
+                $sections[] = $this->build_group_section($group, $context, $fieldlist, $viewfullnames);
             }
-        } else {
-            $users = get_enrolled_users($context, '', $this->groupid, $fieldlist, '', 0, 0, true);
-
-            $users = array_values($users);
-            core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
-
-            foreach ($users as $user) {
-                $picture = new user_picture($user);
-                $picture->size = 100;
-                $items[] = [
-                    'fullname' => fullname($user, true),
-                    'picture' => $picture->get_url($PAGE)->out(false),
-                    'profileurl' => (new moodle_url('/user/view.php', ['id' => $user->id, 'course' => $this->course->id]))->out(false),
-                ];
-            }
+        } else if ($canlistall) {
+            $items = $this->build_user_items($context, $this->groupid, $fieldlist, $viewfullnames);
         }
+        // Otherwise the user belongs to no visible group: $items stays empty and the
+        // template renders the 'nousers' notice.
 
         $groupselection = [
             'title' => get_string('showfacesbygroup', 'block_faces'),
@@ -215,6 +205,62 @@ class faces_page implements renderable, templatable {
         }
 
         return $templatecontext;
+    }
+
+    /**
+     * Build the template data for one group section.
+     *
+     * @param \stdClass $group The group record (id and name are required).
+     * @param \context_course $context The course context.
+     * @param string $fieldlist User fields to fetch.
+     * @param bool $viewfullnames Whether the current user may see full names.
+     * @return array
+     */
+    private function build_group_section(\stdClass $group, \context_course $context, string $fieldlist,
+            bool $viewfullnames): array {
+        $items = $this->build_user_items($context, (int)$group->id, $fieldlist, $viewfullnames);
+
+        return [
+            'groupid' => (int)$group->id,
+            'groupname' => format_string($group->name, true, ['context' => $context]),
+            'users' => $items,
+            'hasusers' => !empty($items),
+            'nousers' => get_string('nousers', 'block_faces'),
+        ];
+    }
+
+    /**
+     * Fetch, sort and export the enrolled users of one group as template items.
+     *
+     * @param \context_course $context The course context.
+     * @param int $groupid Group id, or 0 for all enrolled users.
+     * @param string $fieldlist User fields to fetch.
+     * @param bool $viewfullnames Whether the current user may see full names.
+     * @return array
+     */
+    private function build_user_items(\context_course $context, int $groupid, string $fieldlist,
+            bool $viewfullnames): array {
+        global $PAGE;
+
+        $users = get_enrolled_users($context, '', $groupid, $fieldlist, '', 0, 0, true);
+        $users = array_values($users);
+        core_collator::asort_objects_by_property($users, $this->orderby, core_collator::SORT_NATURAL);
+
+        $items = [];
+        foreach ($users as $user) {
+            $picture = new user_picture($user);
+            $picture->size = 100;
+            $items[] = [
+                'fullname' => fullname($user, $viewfullnames),
+                'picture' => $picture->get_url($PAGE)->out(false),
+                'profileurl' => (new moodle_url('/user/view.php', [
+                    'id' => $user->id,
+                    'course' => $this->course->id,
+                ]))->out(false),
+            ];
+        }
+
+        return $items;
     }
 
     /**

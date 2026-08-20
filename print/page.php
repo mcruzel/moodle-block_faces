@@ -26,13 +26,16 @@ require_once(__DIR__ . '/../../../config.php');
 
 $courseid = required_param('cid', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT);
+// The group selection form submits 'groupids[]' checkboxes, while generated links
+// carry the same selection as a CSV under the scalar name 'groupidlist'. Never read
+// the same parameter name through both optional_param() and optional_param_array().
 $groupids = optional_param_array('groupids', null, PARAM_INT);
-if (!is_array($groupids)) {
-    $groupidscsv = optional_param('groupids', '', PARAM_SEQUENCE);
-    if ($groupidscsv === '') {
+if ($groupids === null) {
+    $groupidlist = optional_param('groupidlist', '', PARAM_SEQUENCE);
+    if ($groupidlist === '') {
         $groupids = [];
     } else {
-        $groupids = array_map('intval', preg_split('/\s*,\s*/', $groupidscsv, -1, PREG_SPLIT_NO_EMPTY));
+        $groupids = array_map('intval', preg_split('/,/', $groupidlist, -1, PREG_SPLIT_NO_EMPTY));
     }
 } else {
     $groupids = array_map('intval', $groupids);
