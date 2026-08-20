@@ -21,6 +21,19 @@ CHANGES
 ---------------------------------------------------
 
 
+Unreleased
+Documentation only - no plugin code change.
+
+- Documented Moodle 5.1+ code tree restructure: the block now installs into
+  public/blocks/faces. Added UPGRADING.md with the full administrator
+  procedure for moving an existing installation.
+- Corrected the compatibility statement in README.txt, which claimed
+  Moodle 4.1 with PHP 8.0-8.1. The plugin runs unchanged on Moodle 4.1
+  through 5.2; Moodle 5.2 requires PHP 8.3.0 or later.
+- Corrected the installation instructions, which pointed at the pre-5.1
+  blocks/ path only.
+
+
 Plugin Version 3.0
 For Moodle 4.1+
 

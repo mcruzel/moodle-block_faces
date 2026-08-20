@@ -25,7 +25,7 @@ by Kyle Goslin & Daniel McSweeney
 Copyright 2013-2018 - Institute of Technology Blanchardstown.
 
 Version 3.0
-For Moodle 4.1+
+For Moodle 4.1 - 5.2
 ----------------------------------------------------------------------
 
 This block is a simple way to view the names and faces of students
@@ -35,11 +35,46 @@ This block uses the existing core Moodle user information and profile images.
 
 Group students by Moodle assigned course groups, or as an entire list.
 
-Compatibility: Moodle 4.1 LTS (PHP 8.0–8.1)
+----------------------------------------------------------------------
 
-Install as a block. Place all plugin files into a folder called faces and
-copy to block directory. Then install via admin account as normal. Run the
-Moodle upgrade to register the updated capabilities and templates.
+COMPATIBILITY
+
+Moodle 4.1 (LTS) up to Moodle 5.2. No plugin code change is required
+anywhere in that range.
+
+Each Moodle release sets its own minimum PHP version, and the plugin
+inherits it:
+
+    Moodle 4.1              PHP 7.4.0 or later
+    Moodle 4.2 - 4.3        PHP 8.0.0 or later
+    Moodle 4.4 - 4.5        PHP 8.1.0 or later
+    Moodle 5.0 - 5.1        PHP 8.2.0 or later
+    Moodle 5.2              PHP 8.3.0 or later
+
+Moodle 5.2 itself can only be upgraded from Moodle 4.4 or later.
+
+
+----------------------------------------------------------------------
+
+INSTALLATION
+
+The plugin directory must be named "faces" and placed in the "blocks"
+directory of the Moodle code tree. Since Moodle 5.1 that directory has
+moved, because every web-servable file now lives under "public":
+
+    Moodle 5.1 and later    <moodleroot>/public/blocks/faces
+    Moodle 5.0 and earlier  <moodleroot>/blocks/faces
+
+Installing through the Moodle admin interface (Site administration >
+Plugins > Install plugins) always resolves the correct location for the
+running version, so prefer it over copying files by hand.
+
+Then log in as an administrator and run the Moodle upgrade to register the
+capabilities and templates.
+
+If you are upgrading an existing site to Moodle 5.1 or later, read
+UPGRADING.md first: add-on plugins are not relocated automatically, and a
+plugin left at the old path is reported as missing from disk.
 
 
 
