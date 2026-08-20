@@ -25,33 +25,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Faces';
-$string['faces'] = 'Faces';
 $string['faces:addinstance'] = 'Add a new Faces block';
-$string['faces:myaddinstance'] = 'Add a new Faces block to the Dashboard';
-
-$string['showallfaces'] = 'Show All Faces';
-$string['showfacesbygroup'] = 'Show Faces By Group';
-$string['update'] = 'Update';
-
-$string['date'] = 'Date';
-$string['course'] = 'Course';
+$string['faces:view'] = 'View the Faces block';
+$string['filter'] = 'Filter';
+$string['firstname'] = 'First Name';
+$string['lastname'] = 'Last Name';
+$string['nousers'] = 'No participants found for the selected filters.';
+$string['orderby'] = 'Order By';
+$string['pluginname'] = 'Faces';
 $string['print'] = 'Print faces';
 $string['printapplyselection'] = 'Display selected groups';
+$string['printdeselectallgroups'] = 'Deselect all groups';
 $string['printgroupsungrouped'] = 'Groups without a grouping';
 $string['printnogroupsavailable'] = 'No groups are available in this course.';
 $string['printnogroupsselected'] = 'Select at least one group to display the printable trombinoscope.';
 $string['printresetselection'] = 'Clear selection';
 $string['printselectallgroups'] = 'Select all groups';
-$string['printdeselectallgroups'] = 'Deselect all groups';
-$string['printtogglesections'] = 'Show selected group sections';
 $string['printtogglegroupselection'] = 'Show group selection';
-
-$string['orderby'] = 'Order By';
-$string['filter'] = 'Filter';
-$string['firstname'] = 'First Name';
-$string['lastname'] = 'Last Name';
-$string['faces:view'] = 'View the Faces block';
-$string['nousers'] = 'No participants found for the selected filters.';
-
 $string['privacy:metadata'] = 'The Faces block displays information gathered from core Moodle user information, but does not store any data itself.';
+$string['showallfaces'] = 'Show All Faces';
+$string['showfacesbygroup'] = 'Show Faces By Group';
+$string['showmygroups'] = 'Show my groups';

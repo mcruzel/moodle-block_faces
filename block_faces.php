@@ -24,6 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Faces block: displays the names and profile pictures of course participants.
+ *
+ * @package   block_faces
+ * @copyright 2025 Moodle
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class block_faces extends block_base {
 
     /**
@@ -39,7 +46,7 @@ class block_faces extends block_base {
      * @return stdClass
      */
     public function get_content() {
-        global $COURSE, $OUTPUT;
+        global $OUTPUT;
 
         if ($this->content !== null) {
             return $this->content;
@@ -49,17 +56,18 @@ class block_faces extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        if (empty($COURSE->id)) {
+        $course = $this->page->course;
+        if (empty($course->id)) {
             return $this->content;
         }
 
-        $context = context_course::instance($COURSE->id);
+        $context = context_course::instance($course->id);
 
         if (!has_capability('block/faces:view', $context)) {
             return $this->content;
         }
 
-        $renderable = new \block_faces\output\faces_block($COURSE->id);
+        $renderable = new \block_faces\output\faces_block($course->id);
         $this->content->text = $OUTPUT->render($renderable);
 
         return $this->content;

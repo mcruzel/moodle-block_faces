@@ -56,11 +56,30 @@ class groups_helper {
             return null;
         }
 
-        if (!groups_group_visible($group, $course)) {
+        if (!groups_group_visible($group->id, $course)) {
             return null;
         }
 
         return $group;
+    }
+
+    /**
+     * Whether the current user may see every course participant regardless of groups.
+     *
+     * Returns false only when the course group mode is separate groups and the user
+     * does not hold the moodle/site:accessallgroups capability.
+     *
+     * @param \stdClass $course The course record.
+     * @param \context_course $context The course context.
+     * @return bool
+     */
+    public static function can_see_all_participants(\stdClass $course, \context_course $context): bool {
+        global $CFG;
+
+        require_once($CFG->libdir . '/grouplib.php');
+
+        return (groups_get_course_groupmode($course) != SEPARATEGROUPS)
+            || has_capability('moodle/site:accessallgroups', $context);
     }
 
     /**
@@ -94,7 +113,7 @@ class groups_helper {
                 $groupinggroups = groups_get_all_groups($course->id, 0, $grouping->id, 'g.*');
                 $groupitems = [];
                 foreach ($groupinggroups as $group) {
-                    if (!groups_group_visible($group, $course)) {
+                    if (!groups_group_visible($group->id, $course)) {
                         continue;
                     }
                     $usedgroupids[$group->id] = true;
@@ -120,7 +139,7 @@ class groups_helper {
             if (isset($usedgroupids[$group->id])) {
                 continue;
             }
-            if (!groups_group_visible($group, $course)) {
+            if (!groups_group_visible($group->id, $course)) {
                 continue;
             }
             $ungroupedgroups[] = [
@@ -150,6 +169,11 @@ class groups_helper {
     /**
      * Add the provided group identifiers to the supplied URL in a safe format.
      *
+     * The identifiers are written as a CSV value under the scalar parameter name
+     * 'groupidlist', distinct from the 'groupids[]' checkbox array submitted by the
+     * group selection forms, so pages never read the same parameter name both as an
+     * array and as a scalar.
+     *
      * @param \moodle_url $url The URL to update.
      * @param array $groupids The group identifiers to append to the URL.
      * @return void
@@ -160,6 +184,6 @@ class groups_helper {
             return;
         }
 
-        $url->param('groupids', implode(',', $groupids));
+        $url->param('groupidlist', implode(',', $groupids));
     }
 }

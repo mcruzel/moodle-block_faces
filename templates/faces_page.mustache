@@ -1,4 +1,111 @@
-{{! @template block_faces/faces_page }}
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_faces/faces_page
+
+    Main Faces page: participant faces of a course, either as a flat grid or
+    grouped in per-group sections, with ordering/filter controls and a
+    collapsible group selection form.
+
+    Context variables required for this template:
+    * coursename - Course full name shown as the page heading.
+    * currentdate - Formatted current date.
+    * showfilters - Whether the filter controls (order, group, print link) are shown.
+    * orderbyselect - Rendered HTML of the order-by select (present when showfilters is true).
+    * groupselect - Rendered HTML of the group filter select (present when showfilters is true).
+    * printurl - URL of the printable view.
+    * printlabel - Label of the print link.
+    * isprint - Whether the page is rendered in print mode.
+    * showgroupselection - Whether the group selection panel is shown.
+    * groupselection - Group selection panel data:
+        title, actionurl, formid, courseid, orderby, hasgroupings,
+        groupings (id, name, groups (id, name, checked), isungrouped optional,
+        selectalllabel, deselectalllabel), nogroupsavailable, submitlabel,
+        resetlabel, showreset, reseturl, selectalllabel, deselectalllabel,
+        contentid, togglelabel, expanded.
+    * displaysections - Whether per-group sections are displayed instead of the flat list.
+    * sections - Group sections: groupid, groupname, users (fullname, picture, profileurl),
+        hasusers, nousers.
+    * users - Flat list of users: fullname, picture, profileurl.
+    * hasusers - Whether the flat list contains users.
+    * nousers - Message shown when no participant matches.
+
+    Example context (json):
+    {
+        "coursename": "Course 101",
+        "currentdate": "20 August 2026",
+        "showfilters": true,
+        "orderbyselect": "<div class=\"singleselect\">...</div>",
+        "groupselect": "<div class=\"singleselect\">...</div>",
+        "printurl": "https://example.com/blocks/faces/print/page.php?cid=2&orderby=firstname",
+        "printlabel": "Print faces",
+        "isprint": false,
+        "showgroupselection": true,
+        "groupselection": {
+            "title": "Show Faces By Group",
+            "actionurl": "https://example.com/blocks/faces/showfaces/show.php",
+            "formid": "faces-groupselection-form-abc123",
+            "courseid": 2,
+            "orderby": "firstname",
+            "hasgroupings": true,
+            "groupings": [
+                {
+                    "id": 1,
+                    "name": "Grouping A",
+                    "groups": [
+                        {"id": 3, "name": "Group 1", "checked": true},
+                        {"id": 4, "name": "Group 2", "checked": false}
+                    ],
+                    "selectalllabel": "Select all groups",
+                    "deselectalllabel": "Deselect all groups"
+                }
+            ],
+            "nogroupsavailable": "No groups are available in this course.",
+            "submitlabel": "Display selected groups",
+            "resetlabel": "Clear selection",
+            "showreset": true,
+            "reseturl": "https://example.com/blocks/faces/showfaces/show.php?cid=2&orderby=firstname&groupid=0",
+            "selectalllabel": "Select all groups",
+            "deselectalllabel": "Deselect all groups",
+            "contentid": "faces-groupselection-def456",
+            "togglelabel": "Show group selection",
+            "expanded": false
+        },
+        "displaysections": true,
+        "sections": [
+            {
+                "groupid": 3,
+                "groupname": "Group 1",
+                "users": [
+                    {
+                        "fullname": "Alice Anderson",
+                        "picture": "https://example.com/pluginfile.php/20/user/icon/boost/f1?rev=1",
+                        "profileurl": "https://example.com/user/view.php?id=5&course=2"
+                    }
+                ],
+                "hasusers": true,
+                "nousers": "No participants found for the selected filters."
+            }
+        ],
+        "users": [],
+        "hasusers": false,
+        "nousers": "No participants found for the selected filters."
+    }
+}}
 <section class="faces-page{{#isprint}} faces-page--print{{/isprint}}">
     <header class="faces-page__header">
         <div class="faces-page__heading">
@@ -11,7 +118,7 @@
             <div class="faces-page__control faces-page__control--orderby">{{{orderbyselect}}}</div>
             <div class="faces-page__control faces-page__control--group">{{{groupselect}}}</div>
             <div class="faces-page__control faces-page__control--print">
-                <a class="btn btn-secondary" href="{{printurl}}" target="_blank">{{printlabel}}</a>
+                <a class="btn btn-secondary" href="{{printurl}}" target="_blank" rel="noopener">{{printlabel}}</a>
             </div>
         </div>
         {{/showfilters}}

@@ -1,4 +1,37 @@
-{{! @template block_faces/faces_block }}
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_faces/faces_block
+
+    Content of the Faces block: a single link, with icon, to the Faces page
+    of the current course.
+
+    Context variables required for this template:
+    * showfacesurl - URL of the Faces page for the course.
+    * imageurl - URL of the block icon image.
+    * linktext - Text displayed for the link (also used as image alt text).
+
+    Example context (json):
+    {
+        "showfacesurl": "https://example.com/blocks/faces/showfaces/show.php?cid=2",
+        "imageurl": "https://example.com/theme/image.php/boost/block_faces/1755648000/faces",
+        "linktext": "Show All Faces"
+    }
+}}
 <div class="faces-block">
     <a class="faces-block__link" href="{{showfacesurl}}">
         <span class="faces-block__media">

@@ -24,8 +24,8 @@ by Kyle Goslin & Daniel McSweeney
 
 Copyright 2013-2018 - Institute of Technology Blanchardstown.
 
-Version 3.0
-For Moodle 4.1+
+Version 3.1.0
+For Moodle 4.5 - 5.2
 ----------------------------------------------------------------------
 
 This block is a simple way to view the names and faces of students
@@ -35,11 +35,15 @@ This block uses the existing core Moodle user information and profile images.
 
 Group students by Moodle assigned course groups, or as an entire list.
 
-Compatibility: Moodle 4.1 LTS (PHP 8.0–8.1)
+Compatibility: Moodle 4.5 LTS - Moodle 5.2
+- Moodle 4.5 LTS: PHP 8.1 or later
+- Moodle 5.2: PHP 8.3 - 8.4
 
 Install as a block. Place all plugin files into a folder called faces and
-copy to block directory. Then install via admin account as normal. Run the
-Moodle upgrade to register the updated capabilities and templates.
+copy it to the blocks directory: since Moodle 5.1 (webroot restructuring)
+this is public/blocks/faces; on older versions it is blocks/faces. Then
+install via admin account as normal. Run the Moodle upgrade to register
+the updated capabilities and templates.
 
 
 

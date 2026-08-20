@@ -29,6 +29,13 @@ use renderable;
 use renderer_base;
 use templatable;
 
+/**
+ * Renderable for the Faces block content shown inside the course.
+ *
+ * @package   block_faces
+ * @copyright 2025 Moodle
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class faces_block implements renderable, templatable {
 
     /**
@@ -50,7 +57,7 @@ class faces_block implements renderable, templatable {
 
         return [
             'showfacesurl' => $url->out(false),
-            'imageurl' => (new moodle_url('/blocks/faces/faces.png'))->out(false),
+            'imageurl' => $output->image_url('faces', 'block_faces')->out(false),
             'linktext' => get_string('showallfaces', 'block_faces'),
         ];
     }
